@@ -19,7 +19,8 @@
 
 use crate::process::Pid;
 use crate::{imp, io};
-use std::ffi::{c_void, CStr};
+use core::ffi::c_void;
+use crate::std_ffi::CStr;
 
 #[cfg(target_arch = "x86")]
 #[inline]

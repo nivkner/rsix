@@ -1,8 +1,8 @@
+#[cfg(not(target_os = "wasi"))]
+use crate::std_ffi::OsString;
 use crate::{imp, io, path};
 #[cfg(not(target_os = "fuchsia"))]
 use io_lifetimes::AsFd;
-#[cfg(not(target_os = "wasi"))]
-use std::ffi::OsString;
 
 /// `chdir(path)`—Change the working directory.
 ///
@@ -45,7 +45,7 @@ pub fn fchdir<Fd: AsFd>(fd: Fd) -> io::Result<()> {
 #[cfg(not(target_os = "wasi"))]
 #[inline]
 pub fn getcwd(reuse: OsString) -> io::Result<OsString> {
-    use std::os::unix::ffi::OsStringExt;
+    use crate::std_os_ffi::OsStringExt;
 
     // This code would benefit from having a better way to read into
     // uninitialized memory, but that requires `unsafe`.

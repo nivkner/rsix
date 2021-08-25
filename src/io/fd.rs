@@ -7,7 +7,7 @@ use io_lifetimes::AsFd;
     all(linux_raw, feature = "procfs"),
     all(libc, not(any(target_os = "fuchsia", target_os = "wasi")))
 ))]
-use {io_lifetimes::BorrowedFd, std::ffi::OsString};
+use {io_lifetimes::BorrowedFd, crate::std_ffi::OsString};
 
 #[cfg(not(target_os = "wasi"))]
 pub use imp::io::DupFlags;
@@ -150,7 +150,7 @@ pub fn ttyname<Fd: AsFd>(dirfd: &Fd, reuse: OsString) -> io::Result<OsString> {
     all(libc, not(any(target_os = "fuchsia", target_os = "wasi")))
 ))]
 fn _ttyname(dirfd: BorrowedFd<'_>, reuse: OsString) -> io::Result<OsString> {
-    use std::os::unix::ffi::OsStringExt;
+    use crate::std_os_ffi::OsStringExt;
 
     // This code would benefit from having a better way to read into
     // uninitialized memory, but that requires `unsafe`.

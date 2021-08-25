@@ -1,4 +1,4 @@
-use std::os::raw::c_int;
+use crate::c_types::c_int;
 
 /// A command for use with [`membarrier`] and [`membarrier_cpu`].
 ///

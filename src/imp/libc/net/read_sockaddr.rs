@@ -1,9 +1,10 @@
 use super::{SocketAddr, SocketAddrUnix};
-use crate::{as_ptr, io};
+use crate::as_ptr;
+use crate::std_ffi::CStr;
+use crate::std_net::{Ipv4Addr, Ipv6Addr, SocketAddrV4, SocketAddrV6};
+use alloc::vec::Vec;
+use core::mem::size_of;
 use libc::sockaddr_storage;
-use std::ffi::CStr;
-use std::mem::size_of;
-use std::net::{Ipv4Addr, Ipv6Addr, SocketAddrV4, SocketAddrV6};
 
 // This must match the header of `sockaddr`.
 #[repr(C)]

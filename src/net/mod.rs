@@ -20,5 +20,5 @@ pub use socket::{
 #[cfg(not(target_os = "wasi"))]
 pub use socketpair::socketpair;
 
+pub use crate::std_net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddrV4, SocketAddrV6};
 pub use imp::net::{SocketAddr, SocketAddrStorage, SocketAddrUnix};
-pub use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddrV4, SocketAddrV6};

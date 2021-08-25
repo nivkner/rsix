@@ -1,10 +1,18 @@
 //! IPv4, IPv6, and Socket addresses.
 
-use super::{read_sockaddr, write_sockaddr, AddressFamily};
+use super::{read_sockaddr, write_sockaddr, AddressFamily, AddressFamily};
+use crate::std_ffi::CString;
+use crate::std_net::{SocketAddrV4, SocketAddrV6};
 use crate::{io, path};
-use std::ffi::{CStr, CString};
-use std::fmt;
-use std::net::{SocketAddrV4, SocketAddrV6};
+use core::fmt;
+#[cfg(any(
+    target_os = "netbsd",
+    target_os = "macos",
+    target_os = "ios",
+    target_os = "freebsd",
+    target_os = "openbsd"
+))]
+use core::mem::size_of;
 
 /// `struct sockaddr_un`
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
