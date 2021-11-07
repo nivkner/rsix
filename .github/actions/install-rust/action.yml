@@ -14,11 +14,13 @@ runs:
       # Needed for now to get 1.24.2 which fixes a bug in 1.24.1 that causes issues on Windows.
       if: runner.os == 'Windows'
       run: rustup self update
+      shell: bash
     - name: Install Rust
       run: |
         rustup set profile minimal
         rustup update ${{ inputs.toolchain }} --no-self-update
         rustup default ${{ inputs.toolchain }}
+      shell: bash
     - name: Set Env
       run: |
         # Save disk space by avoiding incremental compilation,
@@ -27,8 +29,10 @@ runs:
         # Turn down debuginfo from 2 to 1 to help save disk space
         echo "CARGO_PROFILE_DEV_DEBUG=1" >> $GITHUB_ENV
         echo "CARGO_PROFILE_TEST_DEBUG=1" >> $GITHUB_ENV
+      shell: bash
     - name: MacOS Env
       if: runner.os == 'macOS'
       run: |
         echo "CARGO_PROFILE_DEV_SPLIT_DEBUGINFO=unpacked" >> $GITHUB_ENV
         echo "CARGO_PROFILE_TEST_SPLIT_DEBUGINFO=unpacked" >> $GITHUB_ENV
+      shell: bash
