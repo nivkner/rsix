@@ -327,6 +327,7 @@ jobs:
       CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS: --cfg rustix_use_libc
       CARGO_TARGET_RISCV64_UNKNOWN_LINUX_GNU_RUSTFLAGS: --cfg rustix_use_libc
       CARGO_TARGET_ARM_UNKNOWN_LINUX_GNU_RUSTFLAGS: --cfg rustix_use_libc
+      QEMU_VERSION: 6.10.0
     steps:
     - uses: actions/checkout@v2
       with:
@@ -357,18 +358,29 @@ jobs:
         sudo apt-get install -y ${{ matrix.libc_package }}
       if: matrix.libc_package != '' && matrix.os == 'ubuntu-latest'
 
-    - name: Install qemu
+    - name: Get qemu from from cache
+      id: cache_qemu
+      uses: actions/cache@v2
+      if: matrix.qemu != '' && matrix.os == 'ubuntu-latest'
+      with:
+        path: ${{ env.HOME }}/qemu/bin
+        key: qemu-${{ matrix.qemu_target }}-${{ env.QEMU_VERSION }}
+
+    - name: Build qemu
       run: |
         set -ex
         # Download and build qemu from source since the most recent release is
         # way faster at arm emulation than the current version github actions'
         # ubuntu image uses. Disable as much as we can to get it to build
         # quickly.
-        curl https://download.qemu.org/qemu-6.1.0.tar.xz | tar xJf -
-        cd qemu-6.1.0
+        curl https://download.qemu.org/qemu-$QEMU_VERSION.tar.xz | tar xJf -
+        cd qemu-$QEMU_VERSION
         ./configure --target-list=${{ matrix.qemu_target }} --prefix=$HOME/qemu --disable-tools --disable-slirp --disable-fdt --disable-capstone --disable-docs
         make -j$(nproc) install
+      if: matrix.qemu != '' && matrix.os == 'ubuntu-latest' && steps.cache_qemu.outputs.cache-hit != 'true'
 
+    - name: Configure cross compilation
+      run: |
         # Configure Cargo for cross compilation and tell it how it can run
         # cross executables
         upcase=$(echo ${{ matrix.target }} | awk '{ print toupper($0) }' | sed 's/-/_/g')
